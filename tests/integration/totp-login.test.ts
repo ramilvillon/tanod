@@ -130,12 +130,12 @@ Deno.test('hosted login: a TOTP user gets the code page, not a session', async (
   const page = await submitLoginForm(ctx.app, await loginFields(ctx))
   assertEquals(page.status, 200)
   assert(
-    !cookieNames(page).includes('authx_session'),
+    !cookieNames(page).includes('auth_session'),
     'no session before the code',
   )
-  assert(cookieNames(page).includes('authx_mfa'))
+  assert(cookieNames(page).includes('auth_mfa'))
   const mfa = page.headers.getSetCookie().find((c) =>
-    c.startsWith('authx_mfa=')
+    c.startsWith('auth_mfa=')
   )!
   assertStringIncludes(mfa, 'HttpOnly')
   assertStringIncludes(mfa, 'Path=/oauth')
@@ -152,10 +152,10 @@ Deno.test('hosted login: the right code opens the session and redirects with a c
   assertEquals(location.origin + location.pathname, REDIRECT)
   assertEquals(location.searchParams.get('state'), 'st')
   assert(location.searchParams.get('code'))
-  assert(cookieNames(res).includes('authx_session'))
+  assert(cookieNames(res).includes('auth_session'))
   // The challenge is cleared once used.
   const cleared = res.headers.getSetCookie().find((c) =>
-    c.startsWith('authx_mfa=')
+    c.startsWith('auth_mfa=')
   )
   assert(cleared && /Max-Age=0/i.test(cleared))
 })
@@ -227,7 +227,7 @@ Deno.test('hosted login: no challenge cookie means sign in again', async () => {
   const { secret } = await enroll(ctx)
   const page = await submitLoginForm(ctx.app, await loginFields(ctx))
   const csrfOnly = page.headers.getSetCookie()
-    .filter((c) => c.startsWith('authx_csrf='))
+    .filter((c) => c.startsWith('auth_csrf='))
     .map((c) => c.split(';')[0]).join('; ')
   const res = await submitTotpForm(
     ctx.app,
@@ -252,7 +252,7 @@ Deno.test('hosted login: an access token in the challenge cookie is refused', as
   const forged = page.headers.getSetCookie()
     .map((c) => c.split(';')[0])
     .map((c) =>
-      c.startsWith('authx_mfa=') ? `authx_mfa=${Authorization.slice(7)}` : c
+      c.startsWith('auth_mfa=') ? `auth_mfa=${Authorization.slice(7)}` : c
     )
     .join('; ')
   const res = await submitTotpForm(
@@ -271,8 +271,8 @@ Deno.test('the MFA challenge is not an access token', async () => {
   await enroll(ctx)
   const page = await submitLoginForm(ctx.app, await loginFields(ctx))
   const jwt = page.headers.getSetCookie()
-    .find((c) => c.startsWith('authx_mfa='))!.split(';')[0].slice(
-      'authx_mfa='.length,
+    .find((c) => c.startsWith('auth_mfa='))!.split(';')[0].slice(
+      'auth_mfa='.length,
     )
   const res = await ctx.app.request('/users/me', {
     headers: { Authorization: `Bearer ${jwt}` },
@@ -285,7 +285,7 @@ Deno.test('hosted login: a CSRF mismatch on the code page is refused', async () 
   const { secret } = await enroll(ctx)
   const page = await submitLoginForm(ctx.app, await loginFields(ctx))
   const noCsrf = page.headers.getSetCookie()
-    .filter((c) => c.startsWith('authx_mfa='))
+    .filter((c) => c.startsWith('auth_mfa='))
     .map((c) => c.split(';')[0]).join('; ')
   const res = await submitTotpForm(
     ctx.app,
@@ -300,7 +300,7 @@ Deno.test('hosted login: a user without TOTP is unaffected', async () => {
   const ctx = await hostedSetup()
   const res = await submitLoginForm(ctx.app, await loginFields(ctx))
   assertEquals(res.status, 302)
-  assert(cookieNames(res).includes('authx_session'))
+  assert(cookieNames(res).includes('auth_session'))
 })
 
 // A code page's cookies and fields, as reusable posts of one code each.

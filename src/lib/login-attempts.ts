@@ -12,7 +12,7 @@
 //
 // ponytail: per-process, like the rate-limit store beside it. Two replicas
 // mean two counters and twice the guesses -- move both to a shared store at
-// the same time if authx is ever scaled out.
+// the same time if this server is ever scaled out.
 export type LoginAttempts = {
   isLocked(accountId: string): boolean
   recordFailure(accountId: string): void

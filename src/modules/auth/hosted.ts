@@ -9,10 +9,10 @@ import { AppError } from '../../lib/errors.ts'
 import { generateRefreshToken } from '../../lib/tokens.ts'
 import type { AppServiceRecord } from '../orgs/orgs.repository.ts'
 
-export const SESSION_COOKIE = 'authx_session'
-export const CSRF_COOKIE = 'authx_csrf'
+export const SESSION_COOKIE = 'auth_session'
+export const CSRF_COOKIE = 'auth_csrf'
 export const GOOGLE_PATH = '/oauth/google'
-export const PASSKEY_OFFER_COOKIE = 'authx_passkey_offer'
+export const PASSKEY_OFFER_COOKIE = 'auth_passkey_offer'
 
 export type AuthorizeQuery = z.infer<typeof authorizeQuerySchema>
 export type LoginMethod = 'password' | 'google' | 'totp' | 'passkey'

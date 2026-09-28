@@ -171,7 +171,7 @@ Deno.test('login form: an unverified account gets a verify message and no sessio
 
   assertEquals(res.status, 403)
   assert(
-    !(res.headers.get('set-cookie') ?? '').includes('authx_session='),
+    !(res.headers.get('set-cookie') ?? '').includes('auth_session='),
     'no SSO session may be created for an unverified account',
   )
   const page = await res.text()

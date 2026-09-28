@@ -382,7 +382,7 @@ export async function submitLoginForm(
   })
 }
 
-// The hidden inputs a rendered authx page carries, unescaped.
+// The hidden inputs a rendered server page carries, unescaped.
 export function hiddenFields(html: string): Record<string, string> {
   return Object.fromEntries(
     [...html.matchAll(/<input type="hidden" name="([^"]*)" value="([^"]*)">/g)]

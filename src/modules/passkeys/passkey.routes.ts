@@ -45,7 +45,7 @@ export function parseCredential(s: string): unknown {
   }
 }
 
-// The SSO session is the authentication here: these run on authx's own page
+// The SSO session is the authentication here: these run on this server's own page
 // straight after a sign-in. No session reads as "sign in again".
 async function signedInSession(c: Context<AppEnv>) {
   const token = getCookie(c, SESSION_COOKIE)
@@ -172,7 +172,7 @@ const NOT_CONFIGURED = 'Passkeys are not configured, or the token names no ' +
   'user (a service token)'
 
 // Mounted at /users, before the users routes (as the TOTP ones are). Only
-// list and delete: creating a passkey has to happen on authx's own page.
+// list and delete: creating a passkey has to happen on this server's own page.
 export const passkeyManagement = new Hono<AppEnv>()
   .get(
     '/me/passkeys',

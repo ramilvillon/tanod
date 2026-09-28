@@ -70,7 +70,7 @@ function oauthError(c: Context, err: unknown, usedBasic = false): Response {
   // Section 5.2: a client that authenticated with the Authorization header
   // gets a challenge for the same scheme when that authentication fails.
   if (error === 'invalid_client' && usedBasic) {
-    c.header('WWW-Authenticate', 'Basic realm="authx"')
+    c.header('WWW-Authenticate', 'Basic realm="auth"')
   }
   // 400 for everything except a failed client authentication (section 5.2).
   // The catalogue message rides along as the description, so the specific
@@ -197,7 +197,7 @@ const json = (schema: ReturnType<typeof resolver>) => ({
 
 // The signed half-finished login between the first factor and the code.
 // Scoped to /oauth: only /oauth/authorize/totp reads it.
-const MFA_COOKIE = 'authx_mfa'
+const MFA_COOKIE = 'auth_mfa'
 const MFA_PATH = '/oauth'
 const MFA_CHALLENGE_TTL = 300
 const MFA_CODE_ERROR = 'That code is not valid. Check your authenticator ' +
@@ -205,7 +205,7 @@ const MFA_CODE_ERROR = 'That code is not valid. Check your authenticator ' +
 // The authorize request a Google login resumes. Google echoes back only `code`
 // and `state`, and `state` belongs to googleAuth, so the request rides in a
 // cookie of our own, scoped to the one route that reads it.
-const GOOGLE_AUTHORIZE_COOKIE = 'authx_google_authorize'
+const GOOGLE_AUTHORIZE_COOKIE = 'auth_google_authorize'
 
 function renderTotp(
   c: Context<AppEnv>,
@@ -338,7 +338,7 @@ const auth = new Hono<AppEnv>()
       summary: 'Revoke a refresh token',
       requestBody: oauthParams(revokeSchema),
       responses: {
-        // RFC 7009 section 2.2 requires 200 here. A 204 is what authx sent
+        // RFC 7009 section 2.2 requires 200 here. A 204 is what this server sent
         // until an openid-client run proved standard libraries reject it.
         200: { description: 'Revoked (idempotent), empty body' },
         400: {

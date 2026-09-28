@@ -218,7 +218,7 @@ Deno.test('signing in with Google returns a code to the client, and the code red
   const code = location.searchParams.get('code')
   assert(code)
   assert(
-    res.headers.getSetCookie().some((c) => c.startsWith('authx_session=')),
+    res.headers.getSetCookie().some((c) => c.startsWith('auth_session=')),
     'the Google login must open an SSO session like a password login',
   )
 
@@ -277,7 +277,7 @@ Deno.test('a refused Google login shows the login page and signs nobody in', asy
   assertEquals(res.headers.get('location'), null)
   assertStringIncludes(await res.text(), 'not verified')
   assert(
-    !res.headers.getSetCookie().some((c) => c.startsWith('authx_session=')),
+    !res.headers.getSetCookie().some((c) => c.startsWith('auth_session=')),
   )
 })
 
@@ -388,7 +388,7 @@ Deno.test('a Google sign-in of a TOTP user asks for the code before any session'
   }
   assertEquals(page.status, 200)
   assert(
-    !page.headers.getSetCookie().some((c) => c.startsWith('authx_session=')),
+    !page.headers.getSetCookie().some((c) => c.startsWith('auth_session=')),
     'no session before the code',
   )
   const res = await submitTotpForm(ctx.app, page, await totpCode(secret, 1))

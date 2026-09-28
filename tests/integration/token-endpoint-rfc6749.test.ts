@@ -184,7 +184,7 @@ Deno.test('revoke accepts a form-encoded body and the token stops working', asyn
 })
 
 // RFC 7009 section 2.1 names the parameter `token`, with an optional
-// `token_type_hint`. authx only accepted `refresh_token`, so no standard client
+// `token_type_hint`. this server only accepted `refresh_token`, so no standard client
 // could revoke anything -- found by driving the API with openid-client.
 Deno.test('revoke accepts the RFC 7009 `token` parameter', async () => {
   const ctx = makeTestApp()
@@ -265,7 +265,7 @@ const ERROR_CASES: ErrorCase[] = [
       }),
   },
   {
-    name: 'grant_type is one authx does not implement',
+    name: 'grant_type is one this server does not implement',
     status: 400,
     error: 'unsupported_grant_type',
     request: (ctx) =>

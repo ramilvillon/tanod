@@ -7,7 +7,7 @@ import { PLATFORM_AUDIENCE } from '../db/rbac-constants.ts'
 // A token's scope only means what the service it was minted for says it means:
 // permission keys are per-service (`permissions` is unique on
 // (appServiceId, key)), so a tenant service whose RBAC defines a colliding key
-// (e.g. 'users:update:any') would otherwise be authorized against authx's own
+// (e.g. 'users:update:any') would otherwise be authorized against this server's own
 // platform-global resources. Every route guarded here protects such a resource,
 // so a permission counts only on a token minted for the platform audience —
 // the same binding requirePlatform applies to the management API.

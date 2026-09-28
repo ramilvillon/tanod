@@ -1,23 +1,23 @@
-# authx
+# tanod
 
 **Self-hosted auth for TypeScript backends. Your services verify tokens
 themselves. No callback to the auth server on every request.**
 
-[![CI](https://github.com/ramilvillon/authx/actions/workflows/ci.yml/badge.svg)](https://github.com/ramilvillon/authx/actions/workflows/ci.yml)
-[![E2E](https://github.com/ramilvillon/authx/actions/workflows/e2e.yml/badge.svg)](https://github.com/ramilvillon/authx/actions/workflows/e2e.yml)
+[![CI](https://github.com/ramilvillon/tanod/actions/workflows/ci.yml/badge.svg)](https://github.com/ramilvillon/tanod/actions/workflows/ci.yml)
+[![E2E](https://github.com/ramilvillon/tanod/actions/workflows/e2e.yml/badge.svg)](https://github.com/ramilvillon/tanod/actions/workflows/e2e.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-authx gives you users, organizations and per-service roles, and issues signed
+tanod gives you users, organizations and per-service roles, and issues signed
 JWTs that carry exactly what a user may do **in one service**. Each service
 checks the signature against a public key set (JWKS) and reads the permissions
 straight from the token. Hosted-auth ergonomics, on infrastructure you own,
 under the MIT license.
 
-## Why authx
+## Why tanod
 
 - **No auth round-trip.** RS256 tokens verified locally against
   `/.well-known/jwks.json`. While the keys are cached, your APIs keep verifying
-  even if authx is briefly down.
+  even if tanod is briefly down.
 - **Permissions in the token.** Ask for a token for `audience=billing` and its
   `scope` holds that user's billing permissions and nothing else.
 - **Standard OAuth 2.0 and OpenID Connect.** Authorization code + PKCE, refresh
@@ -33,18 +33,18 @@ under the MIT license.
 ```mermaid
 sequenceDiagram
     participant App as Your app
-    participant authx
+    participant tanod
     participant API as Your API
-    App->>authx: sign in (password, Google or passkey, plus TOTP if on)
-    authx-->>App: access token (aud=billing, scope=invoices:read …) + refresh token
+    App->>tanod: sign in (password, Google or passkey, plus TOTP if on)
+    tanod-->>App: access token (aud=billing, scope=invoices:read …) + refresh token
     loop every API call while the access token is valid
         App->>API: Authorization: Bearer #lt;token#gt;
         API->>API: verify signature with cached JWKS, check aud and scope
-        API-->>App: 200, with no call to authx
+        API-->>App: 200, with no call to tanod
     end
-    Note over App,authx: access token expires (15 min by default)
-    App->>authx: POST /oauth/token grant_type=refresh_token
-    authx-->>App: new access token + new refresh token (old one is spent)
+    Note over App,tanod: access token expires (15 min by default)
+    App->>tanod: POST /oauth/token grant_type=refresh_token
+    tanod-->>App: new access token + new refresh token (old one is spent)
 ```
 
 ## Features
@@ -64,7 +64,7 @@ Needs [Deno](https://deno.com) and a Docker engine (Docker Desktop or
 [Colima](https://github.com/abiosoft/colima)).
 
 ```bash
-git clone https://github.com/ramilvillon/authx && cd authx
+git clone https://github.com/ramilvillon/tanod && cd tanod
 make setup      # writes .env with a fresh JWT keypair
 # set BOOTSTRAP_ADMIN_EMAIL and BOOTSTRAP_ADMIN_PASSWORD in .env
 make bootstrap  # starts MySQL + Mailpit, migrates, seeds your admin
@@ -81,7 +81,7 @@ curl -X POST localhost:3000/oauth/token \
   -d username=<admin email> -d password=<admin password>
 ```
 
-Verify it in any service, with no call to authx, for example with
+Verify it in any service, with no call to tanod, for example with
 [`jose`](https://github.com/panva/jose):
 
 ```ts

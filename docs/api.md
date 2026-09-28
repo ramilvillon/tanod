@@ -26,7 +26,7 @@
 | `GET`    | `/oauth/google`                     | —                                  | Sign in with Google, linked from the authorize login page (redirect + return)                                                                |
 | `GET`    | `/oauth/authorize`                  | —                                  | Start SSO; login form or 302 with `?code`                                                                                                    |
 | `POST`   | `/oauth/authorize`                  | —                                  | Submit login; sets session, 302 with `?code` (or the code page, for a two-factor account)                                                    |
-| `POST`   | `/oauth/authorize/totp`             | `authx_mfa` challenge cookie       | Submit a TOTP or recovery code to finish a two-factor sign-in; sets session, 302 with `?code`                                                |
+| `POST`   | `/oauth/authorize/totp`             | `auth_mfa` challenge cookie        | Submit a TOTP or recovery code to finish a two-factor sign-in; sets session, 302 with `?code`                                                |
 | `POST`   | `/oauth/authorize/passkey/options`  | —                                  | Create a sign-in challenge for the hosted login page's passkey button/autofill                                                               |
 | `POST`   | `/oauth/authorize/passkey`          | —                                  | Submit a passkey assertion to sign in; sets session, 302 with `?code`; skips the TOTP prompt                                                 |
 | `GET`    | `/oauth/passkeys/dismiss`           | —                                  | "Not now" on the post-sign-in passkey offer; sets a 30-day dismiss cookie, then continues the authorize request                              |
@@ -110,7 +110,7 @@ mean the account still lacks an address: a guest that binds Google has both.
 
 The global rate limiter is keyed on IP, which a password spray from many
 addresses walks past: each address stays under the limit while one account takes
-every guess. So authx also counts **consecutive failed passwords per account**
+every guess. So tanod also counts **consecutive failed passwords per account**
 (`LOGIN_MAX_FAILURES`, default 10). At the limit that account stops accepting
 passwords for `LOGIN_LOCKOUT_MS` (default 15 minutes), the correct one included
 — that is what makes it work. A successful login clears the count, so an account
@@ -137,7 +137,7 @@ case-insensitively). Failures are 400 `weak_password` or 400
 `password_too_long`.
 
 The 72-byte ceiling is bcrypt's: past it the extra bytes are ignored, so two
-long passwords sharing a prefix would authenticate each other. authx refuses the
+long passwords sharing a prefix would authenticate each other. tanod refuses the
 input rather than silently truncating it. Note the limit counts bytes, so one
 emoji costs four.
 
@@ -223,7 +223,7 @@ with their password alone and set two-factor up again.
 
 `GET`/`POST /oauth/authorize` are unchanged for an account without TOTP. For one
 that has it on, the password form (or a Google sign-in) is followed by a code
-page instead of a session: a signed **`authx_mfa`** challenge cookie (HttpOnly,
+page instead of a session: a signed **`auth_mfa`** challenge cookie (HttpOnly,
 `SameSite=Lax`, path `/oauth`, 5-minute lifetime) records that the first factor
 already succeeded, and the page carries the pending authorize request forward as
 hidden fields.
@@ -258,8 +258,8 @@ happened.
 
 ## Passkeys (WebAuthn)
 
-A passkey is bound to authx's own domain (the relying-party ID), so both
-creating and using one has to run in a browser page authx serves — this is not
+A passkey is bound to tanod's own domain (the relying-party ID), so both
+creating and using one has to run in a browser page tanod serves — this is not
 an API-only feature the way TOTP is. Passkeys are off unless `WEBAUTHN_RP_ID` is
 set (see [Configuration](configuration.md#passkeys-webauthn)); with it empty,
 the login page shows no passkey UI, the sign-in and enrolment routes below
@@ -296,7 +296,7 @@ password and TOTP routes.
 Right after a **password, TOTP, or Google** sign-in (not after a passkey
 sign-in) `finishHostedLogin` shows an offer page — "Sign in faster next time
 with a passkey" — instead of redirecting straight away, unless the browser
-already carries an `authx_passkey_offer=dismissed` cookie. **Not now**
+already carries an `auth_passkey_offer=dismissed` cookie. **Not now**
 (`GET /oauth/passkeys/dismiss`) sets that cookie for 30 days and continues.
 **Create passkey** calls `POST /oauth/passkeys/register/options`, runs
 `navigator.credentials.create()`, then `POST /oauth/passkeys/register`; either
@@ -329,7 +329,7 @@ per account (409 `passkey_limit_reached`); a duplicate credential is 409
 Bearer token; a `client_credentials` (service) token names no user and gets 404,
 like `/users/me`. The public key is never returned. `aaguid` identifies the
 authenticator model (iCloud Keychain, Google Password Manager, a hardware key…)
-from the public community AAGUID list — authx ships no name map, so mapping it
+from the public community AAGUID list — tanod ships no name map, so mapping it
 to a display name is left to the caller. Delete needs only the bearer token: a
 stolen token can remove a passkey, but that only removes a convenience — the
 password or Google sign-in it was created after still works. A password reset or
@@ -349,7 +349,7 @@ passkey enrolled under the old credentials must not outlive them.
 
 ### Native apps
 
-authx has no native WebAuthn integration (no associated-domains setup). A native
+tanod has no native WebAuthn integration (no associated-domains setup). A native
 app gets passkeys the same way it gets any other hosted sign-in: run
 `GET /oauth/authorize` inside `ASWebAuthenticationSession` (iOS) or a Custom Tab
 (Android) rather than an embedded webview — both support passkeys backed by the
