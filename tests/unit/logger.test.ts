@@ -24,7 +24,7 @@ async function logLineFor(headers: Record<string, string>) {
 Deno.test('request log redacts credential-bearing headers', async () => {
   const line = await logLineFor({
     authorization: 'Bearer TOKENSECRET',
-    cookie: 'authx_session=COOKIESECRET',
+    cookie: 'auth_session=COOKIESECRET',
     'proxy-authorization': 'Basic PROXYSECRET',
     'user-agent': 'probe',
   })

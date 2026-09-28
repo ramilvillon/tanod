@@ -173,7 +173,7 @@ Deno.test('an access token is not an MFA challenge', async () => {
   assertEquals(await verifyMfaChallenge(access, keySet), null)
 })
 
-// A service registered with audience 'authx:mfa-challenge' gets access tokens
+// A service registered with audience 'auth:mfa-challenge' gets access tokens
 // carrying that aud; they must still not pass as a challenge.
 Deno.test('an access token with the challenge audience is not a challenge', async () => {
   const access = await signAccessToken({

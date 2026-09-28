@@ -112,7 +112,7 @@ Deno.test('insecureGoogleRedirectWarning flags only plain-http non-localhost red
   for (
     const ok of [
       '',
-      'https://authx.example.com/oauth/google',
+      'https://auth.example.com/oauth/google',
       'http://localhost:3000/oauth/google',
       'http://127.0.0.1:3000/oauth/google',
     ]

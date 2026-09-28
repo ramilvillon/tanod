@@ -136,7 +136,7 @@ Deno.test('after a password sign-in the offer page is shown instead of a redirec
   const html = await res.text()
   assertStringIncludes(html, 'Create passkey')
   assertStringIncludes(html, 'Not now')
-  assert(res.headers.getSetCookie().some((c) => c.startsWith('authx_session=')))
+  assert(res.headers.getSetCookie().some((c) => c.startsWith('auth_session=')))
 })
 
 Deno.test('Not now remembers the choice and continues to the app', async () => {
@@ -152,7 +152,7 @@ Deno.test('Not now remembers the choice and continues to the app', async () => {
   assertEquals(d.status, 302)
   assert(
     d.headers.getSetCookie().some((c) =>
-      c.startsWith('authx_passkey_offer=dismissed')
+      c.startsWith('auth_passkey_offer=dismissed')
     ),
   )
   const next = await ctx.app.request(d.headers.get('location')!, {
@@ -171,7 +171,7 @@ Deno.test('prompt=login keeps only its OIDC meaning: it does not override Not no
   const { res } = await passwordLogin(
     ctx,
     { prompt: 'login' },
-    'authx_passkey_offer=dismissed',
+    'auth_passkey_offer=dismissed',
   )
   // The dismiss cookie still holds: straight through to the app, no offer.
   assertEquals(res.status, 302)
@@ -182,7 +182,7 @@ Deno.test('passkey=add shows the offer even after Not now, and its links drop pr
   const { res } = await passwordLogin(
     ctx,
     { prompt: 'login', passkey: 'add' },
-    'authx_passkey_offer=dismissed',
+    'auth_passkey_offer=dismissed',
   )
   assertEquals(res.status, 200)
   const html = await res.text()

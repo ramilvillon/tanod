@@ -105,7 +105,7 @@ Deno.test('a passkey signs in: session cookie and a code for the client', async 
   const location = new URL(res.headers.get('location')!)
   assertEquals(location.origin + location.pathname, REDIRECT)
   assert(location.searchParams.get('code'))
-  assert(res.headers.getSetCookie().some((c) => c.startsWith('authx_session=')))
+  assert(res.headers.getSetCookie().some((c) => c.startsWith('auth_session=')))
 })
 
 Deno.test('a passkey sign-in skips the TOTP step', async () => {
@@ -161,7 +161,7 @@ Deno.test('a tampered redirect_uri is refused before any session', async () => {
   })
   assertEquals(res.status, 400)
   assert(
-    !res.headers.getSetCookie().some((c) => c.startsWith('authx_session=')),
+    !res.headers.getSetCookie().some((c) => c.startsWith('auth_session=')),
   )
 })
 

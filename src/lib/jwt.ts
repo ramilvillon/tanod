@@ -112,9 +112,9 @@ export async function verifyWithKeyRing(
 // carries no client_id or scope, so requireAuth refuses it as an access token
 // too. All it grants is the right to TRY codes, which the per-account lockout
 // and the replay guard bound.
-export const MFA_CHALLENGE_AUD = 'authx:mfa-challenge'
+export const MFA_CHALLENGE_AUD = 'auth:mfa-challenge'
 // The audience alone is not enough: a service registered with audience
-// 'authx:mfa-challenge' would get access tokens carrying it. Access tokens
+// 'auth:mfa-challenge' would get access tokens carrying it. Access tokens
 // never carry this typ.
 const MFA_CHALLENGE_TYP = 'mfa-challenge'
 

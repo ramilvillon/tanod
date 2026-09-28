@@ -108,7 +108,7 @@ export function createApp(deps: Deps) {
     openAPISpecs(app, {
       documentation: {
         info: {
-          title: 'authx',
+          title: 'auth',
           version: '1.0.0',
           description:
             'Auth server: users, organizations, per-service RBAC, audience-scoped JWTs',

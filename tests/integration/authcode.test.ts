@@ -81,7 +81,7 @@ Deno.test('full auth-code flow: login -> code -> token -> verify', async () => {
   const code = url.searchParams.get('code')!
   assert(code.length > 0)
   const cookie = loginRes.headers.get('set-cookie')!
-  assert(cookie.includes('authx_session='))
+  assert(cookie.includes('auth_session='))
 
   const tokenRes = await ctx.app.request('/oauth/token', {
     method: 'POST',

@@ -88,7 +88,7 @@ Deno.test('a login POST with no CSRF token is refused', async () => {
     'a form post with no CSRF token must be refused',
   )
   assertEquals(
-    res.headers.getSetCookie().some((c) => c.startsWith('authx_session=')),
+    res.headers.getSetCookie().some((c) => c.startsWith('auth_session=')),
     false,
     'no session may be established for the victim',
   )

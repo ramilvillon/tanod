@@ -77,7 +77,7 @@ jobs:
           # here is what puts the transport under test at all.
           echo 'SMTP_HOST=127.0.0.1' >> .env
           echo 'SMTP_PORT=1025' >> .env
-          echo 'EMAIL_FROM=authx-e2e@example.test' >> .env
+          echo 'EMAIL_FROM=tanod-e2e@example.test' >> .env
 
       - name: Apply migrations
         run: deno task db:migrate

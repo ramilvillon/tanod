@@ -58,7 +58,7 @@ lives on your platform:
 
 ```bash
 # crontab on a VM
-0 3 * * * cd /path/to/authx && deno task db:prune
+0 3 * * * cd /path/to/tanod && deno task db:prune
 ```
 
 Kubernetes `CronJob`, Fly/Railway/Render cron jobs, or a scheduled GitHub
